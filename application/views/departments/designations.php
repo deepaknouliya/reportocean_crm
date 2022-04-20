@@ -38,34 +38,31 @@
                         <h5>Add Designation</h5>
                     </div>
                     <div class="card-block">
-                        <form>
+                        <form id="add_designation">
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Select Box</label>
+                                <label class="col-sm-2 col-form-label">Select Department</label>
                                 <div class="col-sm-10">
-                                    <select name="select" class="form-control">
-                                        <option value="opt1">Select Department</option>
-                                        <option value="opt2">Type 2</option>
-                                        <option value="opt3">Type 3</option>
-                                        <option value="opt4">Type 4</option>
-                                        <option value="opt5">Type 5</option>
-                                        <option value="opt6">Type 6</option>
-                                        <option value="opt7">Type 7</option>
-                                        <option value="opt8">Type 8</option>
+                                    <select name="dept_id" class="form-control">
+                                        <option value="" selected="" disabled="" required="">Select Department</option>  
+                                        <?php
+                                        foreach ($departments as $dept) {
+                                        ?>
+                                        <option value="<?=base64_encode($dept['dept_id'])?>"><?=$dept['department_name']?></option>
+                                    <?php } ?>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Designation Name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control">
+                                    <input type="text" name="designation_name" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-2">
-                                <button class="btn waves-effect waves-light btn-grd-primary ">Submit</button>
+                                <button type="submit" class="btn waves-effect waves-light btn-grd-primary">Submit</button>
                             </div>
                             </div>
-
                         </form>
                     </div>
                 </div>

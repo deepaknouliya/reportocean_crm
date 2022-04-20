@@ -38,35 +38,31 @@
                         <h5>Add Department</h5>
                     </div>
                     <div class="card-block">
-                        <form>
+                        <form action="<?=base_url()?>add-department" method="POST">
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Department Name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control">
+                                    <input type="text" name="department_name" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-2">
-                                <button class="btn waves-effect waves-light btn-grd-primary ">Submit</button>
+                                <button type="submit" class="btn waves-effect waves-light btn-grd-primary ">Submit</button>
                             </div>
                             </div>
-
                         </form>
+                        <?php if ($this->session->flashdata('department_success')) { ?>
+                            <div class="alert alert-success"> <?= $this->session->flashdata('department_success') ?> </div>
+                            <?php } ?>
+                            <?php if ($this->session->flashdata('department_error')) { ?>
+                                <div class="alert alert-danger"> <?= $this->session->flashdata('department_error') ?> </div>
+                            <?php } ?>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
                         <h5>Departments List</h5>
-                        <div class="card-header-right">
-                            <ul class="list-unstyled card-option">
-                                <li><i class="fa fa fa-wrench open-card-option"></i></li>
-                                <li><i class="fa fa-window-maximize full-card"></i></li>
-                                <li><i class="fa fa-minus minimize-card"></i></li>
-                                <li><i class="fa fa-refresh reload-card"></i></li>
-                                <li>
-                            </ul>
-                        </div>
                     </div>
                     <div class="card-block table-border-style">
                         <div class="table-responsive">
@@ -79,11 +75,19 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php
+                                    $count = 1;
+                                    foreach ($departments as $dept) {
+                                    ?>
                                     <tr>
-                                        <th scope="row">1</th>
-                                        <td class="text-center">Otto</td>
-                                        <td class="text-center"><button class="btn waves-effect waves-light btn-grd-primary ">Edit</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger ">Delete</button></td>
+                                        <th scope="row"><?=$count?></th>
+                                        <td class="text-center"><?=$dept['department_name']?></td>
+                                        <td class="text-center"><button class="btn waves-effect waves-light btn-grd-primary dept_editor" dept_name="<?=$dept['department_name']?>" dept_id="<?=base64_encode($dept['dept_id'])?>">Edit</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger delete_dept" dept_id="<?=base64_encode($dept['dept_id'])?>">Delete</button></td>
                                     </tr>
+                                    <?php 
+                                    $count++;
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -95,4 +99,27 @@
 </div>
 </div>
 </div>
+</div>
+
+<div class="modal fade" id="updateDeptModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Update Department</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="updateDept">
+          <div class="form-group">
+            <label for="dept_update_input">Department Name</label>
+            <input type="text" class="form-control" name="department_name" id="dept_update_input">
+            <input type="hidden" name="dept_id" id="dept_id_update">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

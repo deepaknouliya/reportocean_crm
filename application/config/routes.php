@@ -57,4 +57,11 @@ $route['departments'] = 'DepartmentController/index';
 $route['designations'] = 'DepartmentController/designations';
 $route['add-employee'] = 'EmployeeController/add_employee';
 $route['view-employees'] = 'EmployeeController/view_employees';
+$route['new-leads'] = 'LeadsController/new_lead';
+$route['settings'] = 'LeadsController/settings';
+$route['login'] = 'LoginController';
+$route['add-department'] = 'DepartmentController/add_department';
+$route['update-dept'] = 'DepartmentController/update_department';
+$route['delete-dept'] = 'DepartmentController/delete_dept';
+$route['add-designation'] = 'DepartmentController/add_designation';
 

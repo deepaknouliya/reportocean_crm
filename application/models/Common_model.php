@@ -1,209 +1,91 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+class Common_model extends CI_Model{
 
-class Common_model extends CI_Model 
-{
-  public function __construct()
-  {
-    parent::__construct();
-  }
-  public function count_record($table, $where = NULL, $join = NULL, $group_by = NULL, $last_query = FALSE)
-  {
-    $this->db->select('*')->from($table);
-    if ($where !== NULL)
-    {
-      (is_array($where)) ? $this->db->where($where, FALSE) : $this->db->where($where, NULL, FALSE);
-    }
-    if ( ! empty($join))
-    {
-      foreach($join as $val) { $this->db->join($val['table'], $val['on'], $val['type']); }
-    }
-    
-    if ($group_by !== NULL) $this->db->group_by($group_by);
-    
-    $query = $this->db->get();
-
-    if($last_query) echo $this->db->last_query();
-    
-    return ($query->num_rows() === 0) ? 0 : $query->num_rows();
-  }
-  // End of count_record function
-
-  public function get_record($table, $columns = '*', $where = NULL, $join = NULL, $sort_column = NULL, $sort_direction = 'ASC', $group_by = NULL,  $result_type = 'object', $last_query = FALSE)
-  {  
-    $this->db->select($columns, FALSE);
-    
+  public function check_user($username,$table,$table_field_name){ //check if user exists
+    $this->db->select('*');
     $this->db->from($table);
-    
-    if ($where !== NULL)
-    {
-      (is_array($where)) ? $this->db->where($where, FALSE) : $this->db->where($where, NULL, FALSE);
-    }
-    
-    if ($join !== NULL)
-    {
-      foreach($join as $val) { $this->db->join($val['table'], $val['on'], $val['type']); }
-    }
-    
-    if ($group_by !== NULL) $this->db->group_by($group_by);
-    
-    if ($sort_column !== NULL) $this->db->order_by($sort_column, $sort_direction, FALSE);
-    $query = $this->db->get();
-    // echo $this->db->last_query();die;
-    //if($last_query) echo $this->db->last_query();  
-    return (strtolower($result_type) === 'array') ? $query->row_array() : $query->row();
+    $this->db->where($table_field_name,$username);
+      $query = $this->db->get();
+      if ( $query->num_rows() > 0 )
+      {
+        return false;
+      }
+      else{
+        return true;
+      }
   }
-  // End of get_record function
-  public function get_records($table, $columns = '*', $where = NULL, $join = NULL, $sort_column = NULL, $sort_direction = 'ASC', $offset = NULL, $limit = NULL, $group_by = NULL, $result_type = 'object', $last_query = FALSE, $in_col=NULL ,$where_in = NULL)
-  {  
-    $this->db->select($columns, FALSE);
-    
+
+  public function fetch_data_join($table1,$table2="",$condition=""){
+    $this->db->select('*');
+    $this->db->from($table1);
+    $this->db->join($table2,$condition);
+    $query = $this->db->get()->result_array();
+    return $query;
+  }
+
+  public function fetch_data_join_double($table,$table1="",$condition1="",$table2="",$condition2){
+    $this->db->select('*');
     $this->db->from($table);
-    
-    if ($where !== NULL)
-    {
-      (is_array($where)) ? $this->db->where($where, FALSE) : $this->db->where($where, NULL, FALSE);
-    }
-    
-    if ($join !== NULL) 
-    {
-      foreach($join as $val) { $this->db->join($val['table'], $val['on'], $val['type']); }
-    }
-    
-    if ($where_in !== NULL && $in_col !==NULL) $this->db->where_in($in_col, $where_in);
-    
-    if ($group_by !== NULL) $this->db->group_by($group_by);
-    
-    if ($sort_column !== NULL) $this->db->order_by($sort_column, $sort_direction, FALSE);
-    
-    if ( ! empty($limit)) $this->db->limit($limit, $offset);
-    $query = $this->db->get();
-     $str = $this->db->last_query();
-    if($last_query) echo $this->db->last_query();
-    
-    return (strtolower($result_type) === 'array') ? $query->result_array() : $query->result();
+    $this->db->join($table1,$condition1);
+    $this->db->join($table2,$condition2);
+    $query = $this->db->get()->result_array();
+    return $query;
   }
-  // End of get_records function
 
-  public function save_record($table, $data, $return_id = TRUE)
-  {
-    if( ! empty($data))
-    {
-      if ($this->db->insert($table, $data)) {
-         // if {$return_id} is true, return last insert id, otherwise return true
-        return ($return_id) ? $this->db->insert_id() : TRUE;
-      }
-      return FALSE;
-    }
-    return FALSE;
+  public function fetch_data_join_double_api($table,$table1="",$condition1="",$table2="",$condition2,$where){
+    $this->db->select('*');
+    $this->db->from($table);
+    $this->db->join($table1,$condition1);
+    $this->db->join($table2,$condition2);
+    $this->db->where($where);
+    $query = $this->db->get()->result_array();
+    return $query;
   }
-  // End of save_record function
-  public function update_batch($table, $data, $where_col)
-  {
-    if( !empty($data) && !empty($data) && !empty($data))
-    {
-      
-      if ($query = $this->db->update_batch($table,$data,$where_col)) {
-        return TRUE;
-      }
-      return FALSE;
-    }
-    return FALSE;
-  }
-  // End of update_record function
-  public function update_record($table, $data, $where = NULL)
-  {
-    if( ! empty($data))
-    {
-      if ($where != NULL)
-        $this->db->where($where);
-      
-      if ($this->db->update($table, $data)) {
-        return TRUE;
-      }
-      return FALSE;
-    }
-    return FALSE;
-  }
-  // End of update_record function
 
-  public function soft_delete($table, $pkey, $varray)
-  {
-    $this->db->where_in($pkey, $varray);
-    
-    if ($this->db->update($table, array('is_deleted' => 1))) {
-      return TRUE;
-    }
-    return FALSE;
+  public function insert_function($table,$data){ // insert into database
+          if($this->db->insert($table, $data)){
+            return true;
+          }
+          else{
+            return false;
+          }
   }
-  // End of delete_records function
-  public function force_delete($table, $condn='')
-  {
-  	// $condn must be an associative array
-  	$this->db->where($condn);		
-  	$this->db->delete($table);	
-  	return true;
+
+  public function insert_last_function($table,$data){ // insert into database
+          if($this->db->insert($table, $data)){
+            $insert_id = $this->db->insert_id();
+        return  $insert_id;
+          }
+          else{
+            return false;
+          }
   }
-  public function get_select_list($table, $value, $label, $where, $join, $sort_column, $sort_direction = 'ASC')
-  {
-    $select_list = array();
-    $result = $this->common_model->get_records($table, "{$value}, {$label}", $where, $join, $sort_column, $sort_direction);
-    if( ! empty($result)) {
-      foreach($result as $row) {
-       $select_list[$row->$value] = $row->$label;
-      }
+
+  public function fetch_data($table,$where = ''){
+    $this->db->select('*');
+    $this->db->from($table);
+    if($where!=""){
+      $this->db->where($where);
     }
-    return $select_list;
-  } // End of get_select_list function
-  public function get_select_list_sort($table, $value, $label, $where, $join, $sort_column, $sort_direction = 'ASC')
-  {
-    $select_list = array();
-    $result = $this->common_model->get_records($table, "{$value}, {$label}", $where, $join, $sort_column, $sort_direction);
-    if( ! empty($result)) {
-      foreach($result as $row) {
-       //$select_list[$row->$value] = $row->$label;
-        $select_list[$row->$label] = $row->$value;
-      }
-    }
-    return $select_list;
-  } // End of get_select_list function
-  
-  public function validate_login($table, $where, $password)
-  { 
-    $this->db->select('*')->from($table)->where($where);
-    
-    $query  = $this->db->get();
-    //echo $this->db->last_query();die;
-    $result = $query->row();
-    
-    if ( empty($result))
-    {
-      return FALSE;
-    }
-    
-    $rs = $this->hash->check_password($password, $result->password);
-    return ($rs) ? $result : $rs;
+    $this->db->order_by("created_date", "desc");
+      $query = $this->db->get()->result_array();
+      return $query;
   }
-  // End of validate_login function
-  public function save_record_multiple($table, $data)
-  {
-    if( ! empty($data))
-    {
-      if ($this->db->insert_batch($table, $data)) {
-         
-        return TRUE;
-      }
-      return FALSE;
-    }
-    return FALSE;
+
+  public function fetch_data_double_and($table,$where = '',$where2=''){
+    $this->db->select('*');
+    $this->db->from($table);
+    $this->db->where($where);
+    $this->db->where($where2);
+    $this->db->order_by("created_date", "desc");
+      $query = $this->db->get()->result_array();
+      return $query;
   }
-  
+
+  public function update_table($table,$data,$condition){
+      $this->db->where($condition);
+      $this->db->update($table,$data);
+      return true;
+  }
+
 }
-
-
-
-
-// End of Common Model Class
-
-/* End of file Common_model.php */
-/* Location: ./application/models/Common_model.php */

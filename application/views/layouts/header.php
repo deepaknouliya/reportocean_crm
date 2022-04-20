@@ -183,7 +183,7 @@
                               </a>
                               <ul class="show-notification profile-notification">
                                   <li class="waves-effect waves-light">
-                                      <a href="#!">
+                                      <a href="<?=base_url('settings')?>">
                                           <i class="ti-settings"></i> Settings
                                       </a>
                                   </li>
