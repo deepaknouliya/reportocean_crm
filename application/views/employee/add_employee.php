@@ -38,34 +38,34 @@
                         <h5>Add Employee</h5>
                     </div>
                     <div class="card-block">
-                        <form>
+                        <form id="add_employee">
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Employee ID</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="employee_id" class="form-control">
+                                    <input type="text" name="employee_id" required class="form-control">
                                 </div>
 
                                 <label class="col-sm-2 col-form-label">Date Of Joining</label>
                                 <div class="col-sm-4">
-                                    <input type="date" name="doj" class="form-control">
+                                    <input type="date" required="" name="doj" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Employee Name</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name ="employee_name" class="form-control">
+                                    <input type="text" required="" name ="employee_name" class="form-control">
                                 </div>
 
                                 <label class="col-sm-2 col-form-label">Gender</label>
                                 <div class="col-sm-4">
                                     <div class="form-check">
-                                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                          <input class="form-check-input" type="radio" name="gender" value="male" checked="" id="flexRadioDefault1">
                                           <label class="form-check-label" for="flexRadioDefault1">
                                             Male
                                           </label>
                                         </div>
                                         <div class="form-check">
-                                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                                          <input class="form-check-input" type="radio" name="gender" value="female" id="flexRadioDefault2">
                                           <label class="form-check-label" for="flexRadioDefault2">
                                             Female
                                           </label>
@@ -75,81 +75,73 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Select Department</label>
                                 <div class="col-sm-4">
-                                    <select name="select" class="form-control">
-                                        <option value="opt1">Select Department</option>
-                                        <option value="opt2">Type 2</option>
-                                        <option value="opt3">Type 3</option>
-                                        <option value="opt4">Type 4</option>
-                                        <option value="opt5">Type 5</option>
-                                        <option value="opt6">Type 6</option>
-                                        <option value="opt7">Type 7</option>
-                                        <option value="opt8">Type 8</option>
+                                    <select name="dept_id" required="" id="emp_dept_change" class="form-control">
+                                        <option value="" selected="" disabled="">Select Department</option>
+                                        <?php
+                                        foreach ($departments as $dept) {
+                                        ?>
+                                        <option value="<?=$dept['dept_id']?>"><?=$dept['department_name']?></option>
+                                        <?php
+                                        $count++;
+                                        }
+                                        ?>
                                     </select>
                                 </div>
 
                                 <label class="col-sm-2 col-form-label">Select Designation</label>
                                 <div class="col-sm-4">
-                                    <select name="select" class="form-control">
-                                        <option value="opt1">Select Designation</option>
-                                        <option value="opt2">Type 2</option>
-                                        <option value="opt3">Type 3</option>
-                                        <option value="opt4">Type 4</option>
-                                        <option value="opt5">Type 5</option>
-                                        <option value="opt6">Type 6</option>
-                                        <option value="opt7">Type 7</option>
-                                        <option value="opt8">Type 8</option>
+                                    <select name="desig_id" required="" id="desig_select" class="form-control">
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Email</label>
                                 <div class="col-sm-4">
-                                    <input type="email" name="emp_email" class="form-control">
+                                    <input type="email" required="" name="email" class="form-control">
                                 </div>
 
                                 <label class="col-sm-2 col-form-label">Password</label>
                                 <div class="col-sm-2">
-                                    <input type="email" name="emp_email" class="form-control">
+                                    <input type="text" required="" id="passwordEmp" name="password" class="form-control">
                                 </div>
                                 <div class="col-sm-2">
-                                    <button class="btn waves-effect waves-light btn-grd-primary ">Generate</button>
+                                    <span id="genPass" class="btn waves-effect waves-light btn-grd-primary ">Generate</span>
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Mobile No.</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="employee_id" class="form-control">
+                                    <input type="tel" maxlength="13" pattern="((\+*)((0[ -]+)*|(91 )*)(\d{12}+|\d{10}+))|\d{5}([- ]*)\d{6}"  name="mobile" class="form-control">
                                 </div>
 
                                 <label class="col-sm-2 col-form-label">Upload Profile Pic</label>
                                 <div class="col-sm-4">
-                                    <input type="file" name="doj" class="form-control">
+                                    <input type="file" name="image_name[]" class="form-control">
                                 </div>
                             </div>
                             <h4 class="sub-title">Permissions</h4>
                             <div class="form-group row">
-                                  <input class="col-sm-2 col-form-label" checked type="checkbox" value="" id="defaultCheck1">
+                                  <input class="col-sm-2 col-form-label" checked type="checkbox" value="1" name="perm_1" id="defaultCheck1">
                                   <label class="form-check-label" for="defaultCheck1">
                                     Lead Management
                                   </label>
 
-                                  <input class="col-sm-2 col-form-label" checked type="checkbox" value="" id="defaultCheck1">
+                                  <input class="col-sm-2 col-form-label" checked type="checkbox" value="1" name="perm_2" id="defaultCheck1">
                                   <label class="form-check-label" for="defaultCheck1">
                                     Profile
                                   </label>
 
-                                  <input class="col-sm-2 col-form-label" type="checkbox" value="" id="defaultCheck1">
+                                  <input class="col-sm-2 col-form-label" type="checkbox" name="perm_3" value="1" id="defaultCheck1">
                                   <label class="form-check-label" for="defaultCheck1">
                                     Admin Access
                                   </label>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-2">
-                                <button class="btn waves-effect waves-light btn-grd-primary ">Submit</button>
+                                <button type="submit" class="btn waves-effect waves-light btn-grd-primary ">Submit</button>
                             </div>
                             </div>
-
                         </form>
                     </div>
                 </div>

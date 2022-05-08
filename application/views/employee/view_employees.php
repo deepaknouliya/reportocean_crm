@@ -60,13 +60,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php
+                                    $count = 1;
+                                    foreach ($employee_data as $emp_data) {
+                                    ?>
                                     <tr>
-                                        <th scope="row">1</th>
-                                        <td class="text-center">Otto</td>
-                                        <td class="text-center">Otto</td>
-                                        <td class="text-center">Otto</td>
+                                        <th scope="row"><?=$count?></th>
+                                        <td class="text-center"><?=$emp_data['employee_name']?></td>
+                                        <td class="text-center"><?=$emp_data['department_name']?></td>
+                                        <td class="text-center"><?=$emp_data['designation_name']?></td>
                                         <td class="text-center"><button class="btn waves-effect waves-light btn-grd-primary ">View/Edit</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger ">Deactivate</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger ">Delete</button></td>
                                     </tr>
+                                    <?php
+                                    $count++;
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>

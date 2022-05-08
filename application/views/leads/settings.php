@@ -1,4 +1,20 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="http://malsup.github.io/jquery.blockUI.js"></script>
+<script>
+function new_func(){
+    console.log("hello");
+    setTimeout( function(){ 
+    $('div.leader').block({ message: 'Not Available in Manual Mode' });
+  }  , 1000 );
+}
+</script>
 <style>
+.leaders{
+    width: 25%;
+}
+.sorting_zone{
+    cursor: pointer;
+}
 .switch {
     position: relative;
     display: block;
@@ -161,7 +177,12 @@
                         <div class="row align-items-center">
                             <div class="col-8">
                                 <label class="switch">
-                                <input class="switch-input" id="settings" type="checkbox" />
+                                <input class="switch-input" <?php
+                                $lead_automate = $lead_automator[0]['automate'];
+                                if ($lead_automate==1) {
+                                    echo "checked";
+                                }
+                                ?> id="settings" type="checkbox" />
                                 <span class="switch-label" data-on="Automatic" data-off="Manual"></span> 
                                 <span class="switch-handle"></span> 
                             </label>
@@ -174,6 +195,11 @@
                 </div>
             </div>
         </div>
+        <?php
+        if ($lead_automate!=1) {
+            echo "<script>new_func();</script>";
+        }
+        ?>
         <div class="row">
             <div class="col-sm-12">
                 <div class="card leader">
@@ -191,18 +217,54 @@
                                         <th>#</th>
                                         <th class="text-center">Name</th>
                                         <th class="text-center">Department</th>
-                                        <th class="text-center">Designation</th>
+                                        <th class="text-center">Report Ocean</th>
+                                        <th class="text-center">Astute Analytica</th>
+                                        <th class="text-center">Panorama Japan</th>
+                                        <th class="text-center">Sorting</th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php 
+                                    $count = 1;
+                                    $i = 0;
+                                    $id_product_first_item = $leads_employees[0]["list_id"];
+                                    $id_product_last_item = $leads_employees[(sizeof($leads_employees)-1)]["list_id"];
+                                    foreach ($leads_employees as $emps) {
+                                    ?>
                                     <tr>
-                                        <th scope="row">1</th>
-                                        <td class="text-center">Otto</td>
-                                        <td class="text-center">Otto</td>
-                                        <td class="text-center">Otto</td>
-                                        <td class="text-center"><button class="btn waves-effect waves-light btn-grd-primary ">View/Edit</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger ">Deactivate</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger ">Delete</button></td>
+                                        <th scope="row"><?=$count?></th>
+                                        <td class="text-center"><?=$emps['employee_name']?></td>
+                                        <td class="text-center"><?=$emps['department_name']?></td>
+                                        <td class="text-center"><?=$emps['report_ocean']?></td>
+                                        <td class="text-center"><?=$emps['astute']?></td>
+                                        <td class="text-center"><?=$emps['panorama']?></td>
+                                        <td class="text-center">
+                                            <div class="sorting_zone">
+                                            <?php 
+                                        if($emps["list_id"]!=$id_product_last_item){ 
+                                            $prod_next_id_item = $leads_employees[($i+1)]["list_id"];
+                                        ?>
+                                        <i class="fa fa-arrow-circle-down" onclick="return adminSwapProductItem(<?php echo $emps["list_id"]; ?>,<?php echo $prod_next_id_item; ?>);"></i>
+                                        <?php 
+                                        }
+
+                                        if($emps["list_id"]!=$id_product_first_item){ 
+                                            $prod_previous_id_item = $leads_employees[($i-1)]["list_id"];
+                                        ?>
+                                        <i class="fa fa-arrow-circle-up" onclick="return adminSwapProductItem(<?php echo $emps["list_id"]; ?>,<?php echo $prod_previous_id_item; ?>);"></i>
+                                        <?php 
+                                        }
+                                        ?>
+                                        </div>
+                                        </td>
+                                        <td class="text-center"><button emp_name="<?=$emps['employee_name']?>" dept_name="<?=$emps['department_name']?>" list_id="<?=$emps['list_id']?>" class="btn waves-effect waves-light btn-grd-primary view_list" rpt="<?=$emps['report_ocean']?>" ast="<?=$emps['astute']?>" pan="<?=$emps['panorama']?>">View/Edit</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger ">Deactivate</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger ">Remove</button></td>
                                     </tr>
+                                    <?php
+                                    $i++;
+                                    $count++;
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -226,19 +288,65 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
+        <form id="add_emp_automate">
         <div class="form-group">
-        <label for="exampleFormControlSelect1">Select Department</label>
-        <select class="form-control" id="exampleFormControlSelect1">
-            <option>--Select Department--</option>
+        <label for="dept_set_change">Select Department</label>
+        <select class="form-control" id="dept_set_change">
+            <option value="" selected="" disabled="">--Select Department--</option>
+            <?php
+            foreach ($departments as $dept) {
+                ?>
+                <option value="<?=$dept['dept_id']?>"><?=$dept['department_name']?></option>
+                <?php
+            }
+            ?>
         </select>
         </div>
         <div class="form-group">
         <label for="exampleFormControlSelect2">Select Employee</label>
-        <select multiple class="form-control" id="exampleFormControlSelect2">
+        <select name="emp_id[]" multiple class="form-control" id="exampleFormControlSelect2">
         </select>
         </div>
-        <button type="button" class="btn btn-primary">Add Employee</button>
+        <button type="submit" class="btn btn-primary">Add Employee</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="leadAdjustModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Manage Daily Leads Quota</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="update_quota">
+        <div class="form-group">
+            <label for="emp_name">Employee Name</label>
+            <input type="text" id="emp_name" readonly="" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="dept_name">Department Name</label>
+            <input type="text" id="dept_name" readonly="" class="form-control">
+            <input type="hidden" name="list_id" id="list_ids">
+        </div>
+        <div class="form-group">
+            <label for="rpt_ocean">Report Ocean</label>
+            <input type="number" min="0" id="rpt_ocean" required="" name="report_ocean" class="form-control leaders">
+        </div>
+        <div class="form-group">
+            <label for="astute_id">Astute</label>
+            <input type="number" min="0" id="astute_id" required="" name="astute" class="form-control leaders">
+        </div>
+        <div class="form-group">
+            <label for="panorama_id">Panorama</label>
+            <input type="number" min="0" id="panorama_id" required="" name="panorama" class="form-control leaders">
+        </div>
+        <button type="submit" class="btn btn-primary">Update Quota</button>
         </form>
       </div>
     </div>

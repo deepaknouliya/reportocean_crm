@@ -9,6 +9,7 @@ class DepartmentController extends CI_Controller {
 	public function __construct() {
        parent::__construct();
        $this->load->model('Common_model');
+       $this->load->model('Leads_model');
        $this->table = "departments";
     }
 
@@ -21,8 +22,33 @@ class DepartmentController extends CI_Controller {
 		$this->load->view('layouts/footer');
 	}
 
+	public function fetch_designations(){
+		$dept_id = $this->input->post('dept_id');
+		$desig = $this->Common_model->fetch_data("designations",array('dept_id'=>$dept_id));
+		if (count($desig)>0) {
+			die(json_encode(array('status'=>'1','data'=>$desig)));
+		}
+		else{
+			die(json_encode(array('status'=>'0')));
+		}
+	}
+
+	public function fetch_employee_department(){
+		$dept_id = $this->input->post('dept_id');
+		$condition = "active='1' AND dept_id='".$dept_id."'";
+		$data = $this->Leads_model->fetch_employee_data($dept_id);
+		if (count($data)>0) {
+			die(json_encode(array('status'=>'1','data'=>$data)));
+		}
+		else{
+			die(json_encode(array('status'=>'0')));
+		}
+	}
+
 	public function designations(){
+		$condition = "designations.dept_id=departments.dept_id";
 		$data['departments'] = $this->Common_model->fetch_data($this->table,array('is_active'=>'1'));
+		$data['designations'] = $this->Common_model->fetch_data_join("designations",$this->table,$condition);
 		$this->load->view('layouts/header');
 		$this->load->view('layouts/sidebar');
 		$this->load->view('departments/designations',$data);
@@ -97,16 +123,20 @@ class DepartmentController extends CI_Controller {
 	}
 
 	public function add_designation(){
+		$date = date('Y-m-d H:i:s');
 		$table = "designations";
 		$dept_id = base64_decode(($this->input->post('dept_id')));
 		$designation_name = $this->input->post('designation_name');
 		$where = array('dept_id'=>$dept_id);
 		$where2 = array('designation_name'=>$designation_name);
 		if(count($this->Common_model->fetch_data_double_and($table,$where,$where2))>0){
-			echo "1";
+			die(json_encode(array('status'=>0,'msg'=>'Designation Already Exists!')));
 		}
 		else{
-			echo "0";
+			$data = array('designation_name'=>$designation_name,'dept_id'=>$dept_id);
+			if($this->Common_model->insert_function($table,$data)){
+				die(json_encode(array('status'=>'1')));
+			}
 		}
 	}
 }

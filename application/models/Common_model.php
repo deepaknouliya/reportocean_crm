@@ -88,4 +88,9 @@ class Common_model extends CI_Model{
       return true;
   }
 
+  public function update_table_single($table,$data){
+      $this->db->update($table,$data);
+      return true;
+  }
+
 }

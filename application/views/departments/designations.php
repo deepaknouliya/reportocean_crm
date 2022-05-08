@@ -92,12 +92,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php
+                                    $count = 1;
+                                    foreach ($designations as $desigs) {
+                                    ?>
                                     <tr>
-                                        <th scope="row">1</th>
-                                        <td class="text-center">Otto</td>
-                                        <td class="text-center">Otto</td>
+                                        <th scope="row"><?=$count?></th>
+                                        <td class="text-center"><?=$desigs['department_name']?></td>
+                                        <td class="text-center"><?=$desigs['designation_name']?></td>
                                         <td class="text-center"><button class="btn waves-effect waves-light btn-grd-primary ">Edit</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger ">Delete</button></td>
                                     </tr>
+                                    <?php 
+                                    $count++;
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>

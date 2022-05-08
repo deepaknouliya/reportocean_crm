@@ -64,4 +64,13 @@ $route['add-department'] = 'DepartmentController/add_department';
 $route['update-dept'] = 'DepartmentController/update_department';
 $route['delete-dept'] = 'DepartmentController/delete_dept';
 $route['add-designation'] = 'DepartmentController/add_designation';
+$route['fetch-designations'] = 'DepartmentController/fetch_designations';
+$route['add-employee-ajax'] = 'EmployeeController/add_employee_ajax';
+$route['activate-employee'] = 'EmployeeController/activate_employee';
+$route['fetch-emp-department'] = 'DepartmentController/fetch_employee_department';
+$route['add-emp-automate'] = 'LeadsController/add_emp_automate';
+$route['update-automate'] = 'LeadsController/update_automate';
+$route['swap-employee'] = 'LeadsController/swap_employee';
+$route['update-quota'] = 'LeadsController/update_quota';
+$route['create-lead-api'] = 'LeadsController/create_lead_api';
 
