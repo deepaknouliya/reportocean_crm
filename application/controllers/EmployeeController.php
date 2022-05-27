@@ -11,6 +11,26 @@ class EmployeeController extends CI_Controller {
        $this->load->model('Common_model');
        $this->table = "departments";
        $this->main_table = "employee";
+       if (isset($_SESSION['user_data'])) {
+       	# code...
+       }
+       else{
+       	redirect(base_url('login'));
+       }
+    }
+
+    public function edit_employee($id){
+    	$emp_id = base64_decode($id);
+    	$data['departments'] = $this->Common_model->fetch_data($this->table,array('is_active'=>'1'));
+    	$condition1 = "departments.dept_id=employee.dept_id";
+		$condition2 = "designations.desig_id=employee.desig_id";
+		$table2 = "designations";
+		$where = array('emp_id'=>$emp_id);
+    	$data['emp_data'] = $this->Common_model->fetch_data_join_double_api($this->main_table,$this->table,$condition1,$table2,$condition2,$where);
+		$this->load->view('layouts/header');
+		$this->load->view('layouts/sidebar');
+		$this->load->view('employee/edit_employee',$data);
+		$this->load->view('layouts/footer');
     }
 
 	public function add_employee()
@@ -36,12 +56,56 @@ class EmployeeController extends CI_Controller {
 	public function activate_employee(){
 		$emp_id = $this->input->post('emp_id');
 		$data = array('active'=>1);
+		if (isset($_POST['act_status'])) {
+			$data = array('active'=>$_POST['act_status']);
+		}
 		$condition = array('emp_id'=>$emp_id);
 		if($this->Common_model->update_table($this->main_table,$data,$condition)){
 			die(json_encode(array('status'=>'1')));
 		}
 		else{
 			die(json_encode(array('status'=>'0')));
+		}
+	}
+
+	public function edit_employee_ajax(){
+		if (!isset($_POST['perm_1'])) {
+			$_POST['perm_1'] = 0;
+		}
+		if (!isset($_POST['perm_2'])) {
+			$_POST['perm_2'] = 0;
+		}
+		if (!isset($_POST['perm_3'])) {
+			$_POST['perm_3'] = 0;
+		}
+		$emp_id = base64_decode($this->input->post('emp_id'));
+		$condition = array('emp_id'=>$emp_id);
+		unset($_POST['emp_id']);
+		$path = "./upload/images/";
+		$title = "title";
+		if($_FILES['image_name']['name'][0]!=""){
+			$uploader = $this->upload_files($path,$title, $_FILES['image_name']);
+			if ($uploader) {
+				$image_name = $uploader[0];
+				$_POST['image_name'] = $image_name;
+				if($this->Common_model->update_table($this->main_table,$_POST,$condition)){
+					die(json_encode(array('status'=>'1','msg'=>'Success')));
+				}
+				else{
+					die(json_encode(array('status'=>'0','msg'=>'Something Went Wrong')));
+				}
+			}
+			else{
+				die(json_encode(array('status'=>'0','msg'=>'The file you are trying to upload is not an image')));
+			}
+		}
+		else{
+			if($this->Common_model->update_table($this->main_table,$_POST,$condition)){
+					die(json_encode(array('status'=>'1','msg'=>'Success')));
+				}
+				else{
+					die(json_encode(array('status'=>'0','msg'=>'Something Went Wrong')));
+			}
 		}
 	}
 

@@ -15,6 +15,11 @@ class Common_model extends CI_Model{
       }
   }
 
+  public function delete_query($table,$condition){
+    $this->db->delete($table,$condition);
+    return true;
+  }
+
   public function fetch_data_join($table1,$table2="",$condition=""){
     $this->db->select('*');
     $this->db->from($table1);

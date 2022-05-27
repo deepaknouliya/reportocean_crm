@@ -13,12 +13,240 @@ class LeadsController extends CI_Controller {
        $this->table = "departments";
     }
 
+    public function create_lead_manual(){
+    	$table = "leads";
+    	$_POST['assigned_user'] = $_SESSION['user_data'][0]['emp_id'];
+    	$_POST['assigned_by'] = $_SESSION['user_data'][0]['emp_id'];
+    	$_POST['updated_by_emp_id'] = $_SESSION['user_data'][0]['emp_id'];
+    	$_POST['updated_by_emp_name'] = $_SESSION['user_data'][0]['employee_name'];
+    	$_POST['lead_status'] = 1;
+    	$_POST['source_id'] = 4;
+    	$lead = $this->Common_model->insert_function($table,$_POST);
+    	if($lead){
+    		die(json_encode(array('status'=>1)));
+    	}
+    	else{
+    		die(json_encode(array('status'=>0)));
+    	}
+    }
+
+    public function assign_lead_manually(){
+    	if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
+    	$table = "leads";
+    	$emp_id = $this->input->post('emp_id');
+    	$lead_id = base64_decode($this->input->post('lead_id'));
+    	$lead_data = array('assigned_user'=>$emp_id,'lead_status'=>1,'assigned_by'=>$_SESSION['user_data'][0]['emp_id']);
+		$condition = array('lead_id'=>$lead_id);
+    	$assign_lead = $this->Common_model->update_table($table,$lead_data,$condition);
+    	echo "1";
+    }
+
+    public function delete_lead(){
+    	$lead_id = base64_decode($this->input->post('lead_id'));
+    	$table = "leads";
+    	$condition = array('lead_id'=>$lead_id);
+    	if($this->Common_model->delete_query($table,$condition)){
+    		die(json_encode(array('status'=>1)));
+    	}
+    	else{
+    		die(json_encode(array('status'=>0)));
+    	}
+    }
+
+    public function fetch_lead(){
+    	$lead_id = base64_decode($this->input->post('lead_id'));
+    	$data = $this->Leads_model->fetch_lead($lead_id);
+    	if (count($data)>0) {
+    		die(json_encode(array('status'=>1,'data'=>$data)));
+    	}
+    	else{
+    		die(json_encode(array('status'=>0)));
+    	}
+    }
+
+    public function update_lead(){
+    	$table = "leads";
+    	$update_date = date('Y-m-d H:i:s');
+    	if (isset($_SESSION['user_data'])) {
+    		if (!isset($_POST['follow_up_date'])) {
+    			$_POST['follow_up_date'] = "";
+    		}
+    		$lead_id = base64_decode($this->input->post('lead_id'));
+    		unset($_POST['lead_id']);
+    		$_POST['update_date'] = $update_date;
+    		$emp_name = $_SESSION['user_data'][0]['employee_name'];
+    		$emp_id = $_SESSION['user_data'][0]['emp_id'];
+    		$_POST['updated_by_emp_id'] = $emp_id;
+    		$_POST['updated_by_emp_name'] = $emp_name;
+    		$condition = array('lead_id'=>$lead_id);
+    		$update = $this->Common_model->update_table($table,$_POST,$condition);
+    		if ($update) {
+    			die(json_encode(array('status'=>1)));
+    		}
+    		else{
+    			die(json_encode(array('status'=>0)));
+    		}
+    	}
+    	else{
+    		die(json_encode(array('status'=>0)));
+    	}
+    }
+
 	public function new_lead()
 	{
-		$this->load->view('layouts/header');
-		$this->load->view('layouts/sidebar');
-		$this->load->view('leads/main');
-		$this->load->view('layouts/footer');
+		if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
+		$table = "leads";
+		if (isset($_SESSION['user_data'])) {
+			$user_id = $_SESSION['user_data'][0]['emp_id'];
+			$where = array('lead_status'=>1);
+			$where2 = array('assigned_user'=>$user_id);
+			$data['leads'] = $this->Common_model->fetch_data_double_and($table,$where,$where2);
+			$data['title'] = "New Leads";
+			$data['departments'] = $this->Common_model->fetch_data($this->table,array('is_active'=>'1'));
+			$this->load->view('layouts/header');
+			$this->load->view('layouts/sidebar');
+			$this->load->view('leads/main',$data);
+			$this->load->view('layouts/footer');
+		}
+		else{
+			redirect(base_url());
+		}
+	}
+
+	public function all_leads(){
+		if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
+		$table = "leads";
+		if (isset($_SESSION['user_data'])) {
+			$user_id = $_SESSION['user_data'][0]['emp_id'];
+			$data['leads'] = $this->Common_model->fetch_data("leads");
+			$data['title'] = "All Leads";
+			$data['departments'] = $this->Common_model->fetch_data($this->table,array('is_active'=>'1'));
+			$this->load->view('layouts/header');
+			$this->load->view('layouts/sidebar');
+			$this->load->view('leads/main',$data);
+			$this->load->view('layouts/footer');
+		}
+		else{
+			redirect(base_url());
+		}
+	}
+
+	public function on_hold()
+	{
+		if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
+		$table = "leads";
+		if (isset($_SESSION['user_data'])) {
+			$user_id = $_SESSION['user_data'][0]['emp_id'];
+			$where = array('lead_status'=>2);
+			$where2 = array('assigned_user'=>$user_id);
+			$data['leads'] = $this->Common_model->fetch_data_double_and($table,$where,$where2);
+			$data['title'] = "On Hold";
+			$data['departments'] = $this->Common_model->fetch_data($this->table,array('is_active'=>'1'));
+			$this->load->view('layouts/header');
+			$this->load->view('layouts/sidebar');
+			$this->load->view('leads/main',$data);
+			$this->load->view('layouts/footer');
+		}
+		else{
+			redirect(base_url());
+		}
+	}
+
+	public function closed()
+	{
+		if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
+		$table = "leads";
+		if (isset($_SESSION['user_data'])) {
+			$user_id = $_SESSION['user_data'][0]['emp_id'];
+			$where = array('lead_status'=>4);
+			$where2 = array('assigned_user'=>$user_id);
+			$data['leads'] = $this->Common_model->fetch_data_double_and($table,$where,$where2);
+			$data['title'] = "Closed";
+			$data['departments'] = $this->Common_model->fetch_data($this->table,array('is_active'=>'1'));
+			$this->load->view('layouts/header');
+			$this->load->view('layouts/sidebar');
+			$this->load->view('leads/main',$data);
+			$this->load->view('layouts/footer');
+		}
+		else{
+			redirect(base_url());
+		}
+	}
+
+	public function rejected()
+	{
+		if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
+		$table = "leads";
+		if (isset($_SESSION['user_data'])) {
+			$user_id = $_SESSION['user_data'][0]['emp_id'];
+			$where = array('lead_status'=>5);
+			$where2 = array('assigned_user'=>$user_id);
+			$data['leads'] = $this->Common_model->fetch_data_double_and($table,$where,$where2);
+			$data['title'] = "Rejected";
+			$data['departments'] = $this->Common_model->fetch_data($this->table,array('is_active'=>'1'));
+			$this->load->view('layouts/header');
+			$this->load->view('layouts/sidebar');
+			$this->load->view('leads/main',$data);
+			$this->load->view('layouts/footer');
+		}
+		else{
+			redirect(base_url());
+		}
+	}
+
+	public function follow_ups()
+	{
+		if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
+		$table = "leads";
+		if (isset($_SESSION['user_data'])) {
+			$user_id = $_SESSION['user_data'][0]['emp_id'];
+			$where = array('lead_status'=>3);
+			$where2 = array('assigned_user'=>$user_id);
+			$data['leads'] = $this->Common_model->fetch_data_double_and($table,$where,$where2);
+			$data['departments'] = $this->Common_model->fetch_data($this->table,array('is_active'=>'1'));
+			$data['title'] = "Follow Ups";
+			$this->load->view('layouts/header');
+			$this->load->view('layouts/sidebar');
+			$this->load->view('leads/main',$data);
+			$this->load->view('layouts/footer');
+		}
+		else{
+			redirect(base_url());
+		}
+	}
+
+	public function unassigned_leads(){
+		if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
+		$table = "leads";
+		$where = array('lead_status'=>0);
+		if ($_SESSION['user_data'][0]['perm_3']==1) {
+			$data['leads'] = $this->Common_model->fetch_data($table,$where);
+			$data['title'] = "Unassigned Leads";
+			$data['departments'] = $this->Common_model->fetch_data($this->table,array('is_active'=>'1'));
+			$this->load->view('layouts/header');
+			$this->load->view('layouts/sidebar');
+			$this->load->view('leads/main',$data);
+			$this->load->view('layouts/footer');
+		}
+		else{
+			redirect(base_url());
+		}
 	}
 
 	public function create_lead_api(){
@@ -75,6 +303,9 @@ class LeadsController extends CI_Controller {
 	}
 
 	public function view_employees(){
+		if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
 		$this->load->view('layouts/header');
 		$this->load->view('layouts/sidebar');
 		$this->load->view('employee/view_employees');
@@ -82,6 +313,9 @@ class LeadsController extends CI_Controller {
 	}
 
 	public function settings(){
+		if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
 		$data['departments'] = $this->Common_model->fetch_data($this->table,array('is_active'=>'1'));
 		$data['leads_employees'] = $this->Leads_model->fetch_automate_employees();
 		$data['lead_automator'] = $this->Common_model->fetch_data("lead_automator");
@@ -92,6 +326,9 @@ class LeadsController extends CI_Controller {
 	}
 
 	public function add_emp_automate(){
+		if (!isset($_SESSION['user_data'])) {
+			redirect(base_url('login'));       
+		}
 		$table="lead_automate_list";
 		foreach ($_POST['emp_id'] as $data) {
 			$insert_data = array('emp_id'=>$data);

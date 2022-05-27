@@ -69,7 +69,22 @@
                                         <td class="text-center"><?=$emp_data['employee_name']?></td>
                                         <td class="text-center"><?=$emp_data['department_name']?></td>
                                         <td class="text-center"><?=$emp_data['designation_name']?></td>
-                                        <td class="text-center"><button class="btn waves-effect waves-light btn-grd-primary ">View/Edit</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger ">Deactivate</button>&nbsp;&nbsp;&nbsp;<button class="btn waves-effect waves-light btn-grd-danger ">Delete</button></td>
+                                        <td class="text-center">
+                                            <a href="<?=base_url()?>edit-employee/<?=base64_encode($emp_data['emp_id'])?>"><button class="btn waves-effect waves-light btn-grd-primary ">View/Edit</button></a>
+                                            &nbsp;&nbsp;&nbsp;
+                                            <?php
+                                            if ($emp_data['active']==1) {
+                                            ?>
+                                            <button class="btn waves-effect waves-light btn-grd-danger emp_status" act_stat="0" user_id="<?=$emp_data['emp_id']?>">Deactivate</button>
+                                            <?php
+                                            }
+                                            else{
+                                            ?>
+                                            <button class="btn waves-effect waves-light btn-grd-success emp_status" act_status="1" user_id="<?=$emp_data['emp_id']?>" >Activate</button>
+                                            <?php
+                                            }
+                                            ?>
+                                        &nbsp;&nbsp;&nbsp;</td>
                                     </tr>
                                     <?php
                                     $count++;

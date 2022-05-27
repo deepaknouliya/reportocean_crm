@@ -7,6 +7,7 @@
     <!-- Required Jquery -->
     <script type="text/javascript" src="<?=base_url('assets/js/jquery/jquery.min.js')?>"></script>
     <script type="text/javascript" src="<?=base_url('assets/js/jquery-ui/jquery-ui.min.js')?>"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="<?=base_url('assets/js/popper.js/popper.min.js')?>"></script>
     <script type="text/javascript" src="<?=base_url('assets/js/bootstrap/js/bootstrap.min.js')?>"></script>
     <script type="text/javascript" src="<?=base_url('assets/pages/widget/excanvas.js')?>"></script>
@@ -34,10 +35,16 @@
     <!-- custom js -->
     <script type="text/javascript" src="<?=base_url('assets/pages/dashboard/custom-dashboard.js')?>"></script>
     <script type="text/javascript" src="<?=base_url('assets/js/script.js ')?>"></script>
-    <script type="text/javascript" src="<?=base_url('assets/js/custom.js ')?>"></script>
+    <script type="text/javascript" main_url="<?=base_url()?>" src="<?=base_url('assets/js/custom.js ')?>"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha512-MqEDqB7me8klOYxXXQlB4LaNf9V9S0+sG1i8LtPOYmHqICuEZ9ZLbyV3qIfADg2UJcLyCm4fawNiFvnYbcBJ1w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha512-f8gN/IhfI+0E9Fc/LKtjVq4ywfhYAVeMGKsECzDUHcFJ5teVwvKTqizm+5a84FINhfrgdvjX8hEJbem2io1iTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
 </body>
 
 </html>

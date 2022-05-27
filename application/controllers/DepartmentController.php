@@ -11,6 +11,12 @@ class DepartmentController extends CI_Controller {
        $this->load->model('Common_model');
        $this->load->model('Leads_model');
        $this->table = "departments";
+       if (isset($_SESSION['user_data'])) {
+       	# code...
+       }
+       else{
+       	redirect(base_url('login'));
+       }
     }
 
 	public function index()
@@ -27,6 +33,18 @@ class DepartmentController extends CI_Controller {
 		$desig = $this->Common_model->fetch_data("designations",array('dept_id'=>$dept_id));
 		if (count($desig)>0) {
 			die(json_encode(array('status'=>'1','data'=>$desig)));
+		}
+		else{
+			die(json_encode(array('status'=>'0')));
+		}
+	}
+
+	public function fetch_emp_department_all(){
+		$dept_id = $this->input->post('dept_id');
+		$condition = "active='1' AND dept_id='".$dept_id."'";
+		$data = $this->Leads_model->fetch_employee_data_all($dept_id);
+		if (count($data)>0) {
+			die(json_encode(array('status'=>'1','data'=>$data)));
 		}
 		else{
 			die(json_encode(array('status'=>'0')));

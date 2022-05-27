@@ -141,20 +141,16 @@
      var formData= new FormData(form[0]); 
         $.ajax({
             type: "POST",
-            url: '../database/cases.php?action=login',
+            url: 'login-ajax',
             data:formData,
             contentType: false,
             processData:false,
-            success:function(data){
-            data = JSON.parse(data);
-           
-            if(data.error == 0){
-
-                window.location.href="dashboard.php";
-            }else{
-                alert(data.msg);
-            }
-
+            success:function(response){
+              var response = JSON.parse(response);
+              if (response.status==1) {
+                var url='<?=base_url()?>';
+                window.location.href=url;
+              }
             }
         });  
     });
